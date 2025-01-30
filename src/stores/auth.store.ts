@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
         async login(credentials: { login: string; password: string }) {
             const response = await AuthService.login(credentials);
             this.token = response.token;
-            localStorage.setItem('token', this.token);
+            localStorage.setItem('token', response.token);
         },
         logout() {
             this.token = null;

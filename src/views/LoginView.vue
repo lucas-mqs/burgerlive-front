@@ -37,7 +37,7 @@ export default {
     const handleLogin = () => {
       const user = testUsers.find(u => u.login === login.value && u.password === password.value);
       if (user) {
-        authStore.isAuthenticated = true;
+        authStore.token = 'token-handler';
         router.push('/home'); // Redireciona corretamente para /home
       } else {
         errorMessage.value = 'Credenciais inválidas';
