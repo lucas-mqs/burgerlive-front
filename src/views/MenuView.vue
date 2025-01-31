@@ -22,19 +22,31 @@
           />
         </div>
       </section>
+
+      <!-- Botão para testar a criação de pedido -->
+      <div class="test-container">
+        <button @click="testarPedido" class="test-button">Criar Pedido de Teste</button>
+        <p v-if="loading">Enviando pedido...</p>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        <p v-if="successMessage" class="success">Pedido criado! ID: {{ successMessage }}</p>
+      </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useMenuStore } from '../stores/menu.store';
-import {computed, onMounted} from 'vue';
-import MenuItem from '../components/MenuItem/MenuItem.vue';
 import { useCartStore } from '../stores/cart.store.ts';
-import type {CartItem} from "../modules/order/domain/models/CartItem.ts";
+import { OrderService } from '../api/order.service';
+import { ref, computed, onMounted } from 'vue';
+import MenuItem from '../components/MenuItem/MenuItem.vue';
+import type { CartItem } from "../modules/order/domain/models/CartItem.ts";
 
 const menuStore = useMenuStore();
 const cartStore = useCartStore();
+const loading = ref(false);
+const errorMessage = ref('');
+const successMessage = ref('');
 
 const menuSections = computed(() => [
   { title: 'Hambúrgueres', icon: '🍔', items: menuStore.hamburgers },
@@ -47,10 +59,33 @@ const handleAddToCart = (item: CartItem) => {
   cartStore.addItem(item);
 };
 
-onMounted(async () => {
-   await menuStore.fetchAll();
-})
+const testarPedido = async () => {
+  loading.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
 
+  try {
+    // Mock de pedido com produtos do menu
+    const pedidoTeste = {
+      items: [
+        { title: 'Hambúrguer Teste', value: 25.99 },
+        { title: 'Batata Teste', value: 9.99 }
+      ],
+      paymentOption: 'Cartão de Crédito'
+    };
+
+    const response = await OrderService.createOrder(pedidoTeste);
+    successMessage.value = response.orderId;
+  } catch (error) {
+    errorMessage.value = 'Erro ao criar o pedido de teste.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  await menuStore.fetchAll();
+});
 </script>
 
 <style scoped>
@@ -83,37 +118,31 @@ onMounted(async () => {
   gap: 2rem;
 }
 
-.price {
-  display: block;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-top: 1rem;
-  font-size: 1.1rem;
+.test-container {
+  text-align: center;
+  margin-top: 20px;
 }
 
-.menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 30px;
+.test-button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.menu-image {
-  width: 100%;
-  max-width: 350px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+.test-button:hover {
+  background-color: #0056b3;
 }
 
-.swiper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 350px;
-  height: 300px;
-  overflow: hidden;
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+.success {
+  color: green;
+  margin-top: 10px;
 }
 </style>

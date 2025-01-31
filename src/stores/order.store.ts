@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { OrderService } from '../api/order.service';
 import type { CreateOrderData, OrderItem } from '../api/order.service';
+import type {CartItem} from "../modules/order/domain/models/CartItem.ts";
 
 interface OrderState {
     orderId: string | null;
@@ -29,7 +30,7 @@ export const useOrderStore = defineStore('order', {
                 };
 
                 const response = await OrderService.createOrder(orderData);
-                this.orderId = response.data.orderId;
+                this.orderId = response.orderId; // Ajustado para pegar `orderId` do response
                 this.clearCart();
             } catch (error: any) {
                 this.error = error.response?.data?.message || 'Erro ao finalizar pedido';
@@ -38,7 +39,7 @@ export const useOrderStore = defineStore('order', {
             }
         },
 
-        addItemToCart(item: OrderItem) {
+        addItemToCart(item: CartItem) {
             this.selectedItems.push(item);
         },
 
