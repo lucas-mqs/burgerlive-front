@@ -10,11 +10,7 @@
 
     <div v-else>
       <div class="order-items">
-        <div
-            v-for="item in cartStore.items"
-            :key="item.id + (item.options?.type || '')"
-            class="order-item"
-        >
+        <div v-for="item in cartStore.items" :key="item.id + (item.options?.type || '')" class="order-item">
           <h3>{{ item.name }}</h3>
           <p v-if="item.options?.type">Tipo: {{ item.options.type === 'single' ? 'Simples' : 'Combo' }}</p>
           <p>Quantidade: {{ item.quantity }}</p>
@@ -28,24 +24,24 @@
 
         <div class="payment-methods">
           <div
-              v-for="method in paymentMethods"
-              :key="method"
-              class="payment-method"
+            v-for="method in paymentMethods"
+            :key="method"
+            class="payment-method"
           >
             <input
-                type="radio"
-                :id="method"
-                :value="method"
-                v-model="selectedPaymentMethod"
+              type="radio"
+              :id="method"
+              :value="method"
+              v-model="selectedPaymentMethod"
             />
             <label :for="method">{{ method }}</label>
           </div>
         </div>
 
         <button
-            class="pay-button"
-            @click="handlePayment"
-            :disabled="!selectedPaymentMethod"
+          class="pay-button"
+          @click="handlePayment"
+          :disabled="!selectedPaymentMethod"
         >
           Finalizar Pedido
         </button>
@@ -59,14 +55,13 @@ import { useCartStore } from '../stores/cart.store';
 import { ref } from 'vue';
 import { PaymentMethod } from '../modules/order/domain/models/PaymentMethod';
 import { PaymentService } from '../modules/order/infrastructure/services/PaymentService';
-import { useRouter } from 'vue-router';
 
 const cartStore = useCartStore();
-const router = useRouter();
 const selectedPaymentMethod = ref<PaymentMethod | null>(null);
 const paymentService = new PaymentService();
 
 const paymentMethods = Object.values(PaymentMethod);
+const emit = defineEmits(['checkout-complete']);
 
 const handlePayment = async () => {
   if (!selectedPaymentMethod.value) return;
@@ -77,7 +72,7 @@ const handlePayment = async () => {
     if (success) {
       alert('Pagamento realizado com sucesso!');
       cartStore.clearCart();
-      router.push('/');
+      emit('checkout-complete');
     }
   } catch (error) {
     alert('Erro no pagamento: ' + error);
@@ -98,11 +93,21 @@ const handlePayment = async () => {
   margin-bottom: 1rem;
 }
 
+.payment-section {
+  text-align: center;
+}
+
 .payment-methods {
   margin: 2rem 0;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .pay-button {

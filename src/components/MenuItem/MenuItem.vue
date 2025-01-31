@@ -12,11 +12,14 @@
       <div class="swiper-button-next"></div>
       <div class="swiper-button-prev"></div>
     </div>
+
     <div v-else>
       <ItemImages :images="item.image" />
     </div>
 
-    <p>{{ item.description }}</p>
+    <div class="description">
+      <p>{{ item.description }}</p>
+    </div>
 
     <ItemOptions :item="item" v-model="selectedOption" />
     <QuantitySelector v-model="quantity" @add-to-cart="handleAddToCart" />
@@ -48,6 +51,7 @@ const emit = defineEmits(['add-to-cart']);
 
 const quantity = ref(1);
 const selectedOption = ref<number | null>(null);
+
 
 const handleAddToCart = () => {
   const price = selectedOption.value ?? props.item.value ?? 0;
@@ -91,13 +95,24 @@ onMounted(() => {
 });
 </script>
 
-<!-- <style scoped>
+<style scoped>
 .menu-item {
-  margin: 1rem;
+  margin: 1rem auto;
   padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
-  width: calc(33.333% - 2rem);
+  width: calc(115% - 2rem); /* Aumentar a largura do componente */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .menu-image {
@@ -134,4 +149,22 @@ onMounted(() => {
 .swiper-button-prev::after {
   font-weight: bold;
 }
-</style> -->
+
+.description {
+  flex: 1;
+  text-align: justify;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .menu-item {
+    width: calc(50% - 2rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-item {
+    width: calc(100% - 2rem);
+  }
+}
+</style>

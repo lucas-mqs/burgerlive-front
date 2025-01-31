@@ -1,21 +1,14 @@
 <template>
   <div class="options">
-    <!-- Opções de escolha -->
     <template v-if="hasOptions">
       <template v-for="key in optionOrder" :key="key">
-        <label v-if="item.values?.[key] !== null && item.values?.[key] !== undefined">
-          <input
-              type="radio"
-              :name="`option-${item.id}`"
-              :value="item.values[key]"
-              v-model="selectedOption"
-          />
-          {{ optionLabels[key] }} - R$ {{ item.values[key] }}
+        <label v-if="item.values?.[key] !== null && item.values?.[key] !== undefined" class="option-label">
+          <input type="radio" :name="`option-${item.id}`" :value="item.values[key]" v-model="selectedOption" />
+          <span class="price">{{ optionLabels[key] }} - R$ {{ item.values[key] }}</span>
         </label>
       </template>
     </template>
 
-    <!-- Valor fixo (se existir) -->
     <template v-else-if="item.value !== undefined && item.value !== null">
       <p class="fixed-price">R$ {{ item.value }}</p>
     </template>
@@ -28,7 +21,7 @@ import { computed } from 'vue';
 const props = defineProps<{
   item: {
     id: string;
-    value?: number | null; // Pode ser null ou undefined
+    value?: number | null;
     values?: Record<string, number | null>;
   };
 }>();
@@ -43,7 +36,6 @@ const optionLabels: Record<string, string> = {
   combo: 'Combo'
 };
 
-// Verifica se tem opções de escolha
 const hasOptions = computed(() => {
   return !!props.item.values && Object.keys(props.item.values).length > 0;
 });
@@ -52,8 +44,25 @@ const hasOptions = computed(() => {
 <style scoped>
 .options {
   display: flex;
-  flex-direction: column;
   gap: 0.5rem;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.description {
+  flex: 1;
+  text-align: justify;
+}
+
+.price {
+  font-weight: bold;
+  color: #2c3e50;
 }
 
 .fixed-price {

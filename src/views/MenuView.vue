@@ -6,7 +6,7 @@
     <div v-if="menuStore.loading" class="loading">Carregando...</div>
 
     <section>
-      <!-- Seções dinâmicas -->
+      
       <section class="menu-section" v-for="section in menuSections" :key="section.title">
         <h2>{{ section.icon }} {{ section.title }}</h2>
         <div class="grid">
@@ -14,7 +14,6 @@
         </div>
       </section>
 
-      <!-- Botão para testar a criação de pedido -->
       <div class="test-container">
         <button @click="testarPedido" class="test-button">Criar Pedido de Test</button>
         <p v-if="loading">Enviando pedido...</p>

@@ -1,28 +1,36 @@
 <template>
   <div class="quantity-selector">
-    <button @click="decrement">-</button>
-    <span>{{ quantity }}</span>
-    <button @click="increment">+</button>
+    <div class="quantity-controls">
+      <button @click="decrement">-</button>
+      <span>{{ quantity }}</span>
+      <button @click="increment">+</button>
+    </div>
     <button class="add-button" @click="$emit('add-to-cart')">Adicionar</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const quantity = ref(1);
 
-const emit = defineEmits(['add-to-cart']);
+const emit = defineEmits(['add-to-cart', 'update:modelValue']);
 
 const increment = () => {
   quantity.value += 1;
+  emit('update:modelValue', quantity.value);
 };
 
 const decrement = () => {
   if (quantity.value > 1) {
     quantity.value -= 1;
+    emit('update:modelValue', quantity.value);
   }
 };
+
+watch(quantity, (newQuantity) => {
+  emit('update:modelValue', newQuantity);
+});
 
 defineExpose({ quantity });
 </script>
@@ -33,6 +41,12 @@ defineExpose({ quantity });
   align-items: center;
   gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 button {

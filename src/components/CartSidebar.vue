@@ -1,8 +1,7 @@
 <template>
     <div class="cart-sidebar" :class="{ open: isOpen }">
         <div class="cart-header">
-            <h2>Carrinho de Compras</h2>
-            <button @click="toggleCart">Fechar</button>
+            <h2>Carrinho</h2>
         </div>
         <div v-if="cartStore.items.length === 0" class="empty-cart">
             <p>Seu carrinho está vazio</p>
@@ -11,7 +10,8 @@
             <div class="cart-items">
                 <div v-for="item in cartStore.items" :key="item.id + (item.options?.type || '')" class="cart-item">
                     <h3>{{ item.name }}</h3>
-                    <p v-if="item.options?.type">Tipo: {{ item.options.type === 'single' ? 'Simples' : 'Combo' }}</p>
+                    <p v-if="item.options?.type">Tipo: {{ item.options.type === 'single' ? 'Simples' : 'Combo' }}
+                    </p>
                     <div class="quantity-controls">
                         <button @click="decrementQuantity(item)">-</button>
                         <span>{{ item.quantity }}</span>
@@ -24,8 +24,11 @@
             </div>
             <div class="cart-summary">
                 <h2>Total: R$ {{ cartStore.totalPrice.toFixed(2) }}</h2>
-                <button class="checkout-button" @click="handlePayment">Finalizar Pedido</button>
+                <button class="checkout-button" @click="openCheckout">Finalizar Pedido</button>
             </div>
+        </div>
+        <div class="cart-footer">
+            <button @click="toggleCart">Fechar</button>
         </div>
     </div>
 </template>
@@ -33,12 +36,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useCartStore } from '../stores/cart.store';
-import { useRouter } from 'vue-router';
 import type { CartItem } from '../modules/order/domain/models/CartItem';
 
 const cartStore = useCartStore();
 const isOpen = ref(false);
-const router = useRouter();
+
+const emit = defineEmits(['open-checkout']);
 
 const toggleCart = () => {
     isOpen.value = !isOpen.value;
@@ -60,8 +63,9 @@ const decrementQuantity = (item: CartItem) => {
     }
 };
 
-const handlePayment = () => {
-    router.push('/checkout');
+const openCheckout = () => {
+  toggleCart();
+  emit('open-checkout');
 };
 
 defineExpose({ toggleCart });
@@ -72,13 +76,15 @@ defineExpose({ toggleCart });
     position: fixed;
     top: 0;
     right: -100%;
-    width: 300px;
+    width: 400px;
     height: 100%;
     background-color: white;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     transition: right 0.3s ease;
     z-index: 1000;
     padding: 1rem;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .cart-sidebar.open {
@@ -93,8 +99,10 @@ defineExpose({ toggleCart });
 }
 
 .cart-items {
-    max-height: 70%;
-    overflow-y: auto;
+  overflow-y: auto; /* Adiciona barra de rolagem vertical */
+  overflow-x: hidden; /* Oculta rolagem horizontal */
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
 .cart-item {

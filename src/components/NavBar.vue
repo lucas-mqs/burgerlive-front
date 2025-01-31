@@ -1,16 +1,34 @@
 <template>
   <nav class="navbar">
-    <router-link to="/" class="nav-link">BURGUERLIVE</router-link>
-    <div class="cart-icon" @click="$emit('toggle-cart')">
-      🛒 ({{ cartStore.items.length }})
+    <div class="navbar-brand">
+      <router-link to="/" class="nav-link">BURGUERLIVE</router-link>
+    </div>
+    <div class="navbar-menu">
+      <div class="cart-info">
+        <button @click="toggleCart">Carrinho ({{ cartStore.items.length }})</button>
+      </div>
+      <button @click="logout">Logout</button>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
 import { useCartStore } from '../stores/cart.store';
+import { useRouter } from 'vue-router';
 
 const cartStore = useCartStore();
+
+const emit = defineEmits(['toggle-cart']);
+const router = useRouter();
+
+const logout = () => {
+  localStorage.removeItem('authToken');
+  router.push('/login');
+};
+
+const toggleCart = () => {
+  emit('toggle-cart');
+};
 </script>
 
 <style scoped>
