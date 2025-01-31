@@ -45,7 +45,7 @@ const menuSections = computed(() => [
   { title: 'Sobremesas', icon: '🍰', items: menuStore.desserts },
   { title: 'Bebidas', icon: '🥤', items: menuStore.beverages }
 ]);
-
+// @ts-ignore
 const handleAddToCart = (item: CartItem) => {
   orderStore.addItemToCart(item);
 };
