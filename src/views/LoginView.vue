@@ -34,18 +34,17 @@ export default {
     const authStore = useAuthStore();
     const router = useRouter();
 
-    const handleLogin = () => {
-      const user = testUsers.find(u => u.login === login.value && u.password === password.value);
-      if (user) {
-        authStore.token = 'token-handler';
-        router.push('/home'); // Redireciona corretamente para /home
-      } else {
-        errorMessage.value = 'Credenciais inválidas';
+    const handleLogin = async () => {
+      try {
+        await authStore.login({ login: login.value, password: password.value });
+        router.push('/home');
+      } catch (error) {
+        errorMessage.value = 'Credenciais inválidas ou erro na autenticação';
       }
     };
 
     return { login, password, handleLogin, errorMessage };
-  }
+  },
 };
 </script>
 

@@ -1,31 +1,34 @@
 import { defineStore } from 'pinia';
 import { OrderService } from '../api/order.service';
-import type { CreateOrderData, OrderItem } from '../api/order.service';
+import type { CreateOrderData } from '../api/order.service';
+import type { CartItem } from '../modules/order/domain/models/CartItem';
 
 interface OrderState {
     orderId: string | null;
     loading: boolean;
     error: string | null;
-    selectedItems: OrderItem[];
+    selectedItems: CartItem[];
+    paymentOption: string;
 }
 
 export const useOrderStore = defineStore('order', {
     state: (): OrderState => ({
-        orderId: null,
-        loading: false,
+        selectedItems: [],
         error: null,
-        selectedItems: []
+        loading: false,
+        orderId: null,
+        paymentOption: ''
     }),
 
     actions: {
-        async createOrder(paymentOption: string) {
+        async createOrder() {
             this.loading = true;
             this.error = null;
 
             try {
                 const orderData: CreateOrderData = {
                     items: this.selectedItems,
-                    paymentOption
+                    paymentOption: this.paymentOption || ''
                 };
 
                 const response = await OrderService.createOrder(orderData);
@@ -38,7 +41,7 @@ export const useOrderStore = defineStore('order', {
             }
         },
 
-        addItemToCart(item: OrderItem) {
+        addItemToCart(item: CartItem) {
             this.selectedItems.push(item);
         },
 
@@ -52,8 +55,6 @@ export const useOrderStore = defineStore('order', {
     },
 
     getters: {
-        totalAmount: (state) => {
-            return state.selectedItems.reduce((sum, item) => sum + item.value, 0);
-        }
+        totalAmount: (state) => state.selectedItems.reduce((total: number, item: CartItem) => total + item.price, 0),
     }
 });

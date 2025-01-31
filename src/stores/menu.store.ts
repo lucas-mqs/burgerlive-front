@@ -1,20 +1,33 @@
 import { defineStore } from 'pinia';
 import { MenuService } from '../api/menu.service';
 
+interface MenuItem {
+    id: string;
+    name: string;
+    title: string;
+    description: string;
+    image: string | string[];
+    values: {
+        single: number;
+        combo: number;
+    };
+    value?: number;
+}
+
 export const useMenuStore = defineStore('menu', {
     state: () => ({
-        categories: [],
-        hamburgers: [],
-        appetizers: [],
-        desserts: [],
-        beverages: [],
-        paymentOptions: [],
+        categories: [] as string[],
+        hamburgers: [] as MenuItem[],
+        appetizers: [] as MenuItem[], 
+        desserts: [] as MenuItem[],
+        beverages: [] as MenuItem[], 
+        paymentOptions: [] as string[],
         loading: false
     }),
     actions: {
         async fetchAll() {
+            this.loading = true;
             try {
-                this.loading = true;
                 const [categories, hamburgers, appetizers, desserts, beverages, paymentOptions] =
                     await Promise.all([
                         MenuService.getCategories(),
@@ -32,7 +45,7 @@ export const useMenuStore = defineStore('menu', {
                 this.beverages = beverages.data;
                 this.paymentOptions = paymentOptions.data;
             } catch (error) {
-                console.error('Error fetching menu:', error);
+                console.error('Falha ao buscar o menu:', error);
             } finally {
                 this.loading = false;
             }
