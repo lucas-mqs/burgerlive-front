@@ -81,7 +81,3 @@ curl --location 'https://burgerlivery-api.vercel.app/order/create-order' \
   npm install
   ```
 
----
-
-📌 **Este README pode ser atualizado conforme necessário!** 🚀
-
