@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia';
-import type { OrderItem } from '../api/order.service';
-
-interface CartItem {
-    title: string;
-    value: number;
-}
+import { OrderService } from '../api/order.service';
+import type { CreateOrderData } from '../api/order.service';
+import type { CartItem } from '../modules/order/domain/models/CartItem';
 
 interface OrderState {
     orderId: string | null;
     loading: boolean;
     error: string | null;
-    selectedItems: OrderItem[];
+    selectedItems: CartItem[];
+    paymentOption: string;
 }
 
 export const useOrderStore = defineStore('order', {
@@ -18,7 +16,8 @@ export const useOrderStore = defineStore('order', {
         selectedItems: [],
         error: null,
         loading: false,
-        orderId: null
+        orderId: null,
+        paymentOption: ''
     }),
 
     actions: {
@@ -27,16 +26,13 @@ export const useOrderStore = defineStore('order', {
             this.error = null;
 
             try {
-                // const orderData: CreateOrderData = {
-                //     items: this.selectedItems,
-                //     paymentOption
-                // };
+                const orderData: CreateOrderData = {
+                    items: this.selectedItems,
+                    paymentOption: this.paymentOption || ''
+                };
 
-                // const response = await OrderService.createOrder(orderData);
-                // this.orderId = response.data.orderId;
-
-                await new Promise((resolve) => setTimeout(resolve, 2000));
-
+                const response = await OrderService.createOrder(orderData);
+                this.orderId = response.data.orderId;
                 this.clearCart();
             } catch (error: any) {
                 this.error = error.response?.data?.message || 'Erro ao finalizar pedido';
@@ -45,7 +41,7 @@ export const useOrderStore = defineStore('order', {
             }
         },
 
-        addItemToCart(item: OrderItem) {
+        addItemToCart(item: CartItem) {
             this.selectedItems.push(item);
         },
 
@@ -59,6 +55,6 @@ export const useOrderStore = defineStore('order', {
     },
 
     getters: {
-        totalAmount: (state) => state.selectedItems.reduce((total: number, item: CartItem) => total + item.value, 0),
+        totalAmount: (state) => state.selectedItems.reduce((total: number, item: CartItem) => total + item.price, 0),
     }
 });

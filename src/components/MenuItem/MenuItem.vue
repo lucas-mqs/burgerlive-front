@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { CartItem } from '../modules/order/domain/models/CartItem';
+import type { CartItem } from '../../modules/order/domain/models/CartItem';
 import ItemImages from '../MenuItem/ItemImages.vue';
 import ItemOptions from '../MenuItem/ItemOptions.vue';
 import QuantitySelector from '../MenuItem/QuantitySelector.vue';
@@ -31,7 +31,7 @@ const props = defineProps<{
     id: string;
     title: string;
     description: string;
-    image: string[];
+    image: string;
     values?: Record<string, number | null>; // Alterado para estrutura genérica
     value?: number;
   };
@@ -60,11 +60,11 @@ const handleAddToCart = () => {
 };
 
 // Helper para identificar o tipo da opção selecionada
-const getOptionType = (value: number): string | undefined => {
+const getOptionType = (value: number): 'single' | 'combo' | undefined => {
   if (!props.item.values) return undefined;
 
   return Object.entries(props.item.values).find(
       ([_, val]) => val === value
-  )?.[0]; // Retorna 'small', 'large', etc.
+  )?.[0] as 'single' | 'combo' | undefined;
 };
 </script>

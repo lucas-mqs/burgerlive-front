@@ -27,14 +27,14 @@
             <!-- Opções de Compra -->
             <div class="options">
               <label v-if="item.value">
-                <input type="radio" :name="`option-${item.id}`" :value="item.value.single"
+                <input type="radio" :name="`option-${item.id}`" :value="item.values.single"
                   v-model="selectedValues[item.id]" />
-                Simples - R$ {{ item.value.single }}
+                Simples - R$ {{ item.values.single }}
               </label>
               <label v-if="item.value">
-                <input type="radio" :name="`option-${item.id}`" :value="item.value.combo"
+                <input type="radio" :name="`option-${item.id}`" :value="item.values.combo"
                   v-model="selectedValues[item.id]" />
-                Combo - R$ {{ item.value.combo }}
+                Combo - R$ {{ item.values.combo }}
               </label>
             </div>
             <p>Preço Selecionado: R$ {{ selectedValues[item.id] || 'Escolha uma opção' }}</p>
@@ -126,7 +126,7 @@ onMounted(async () => {
 const addToCart = (item: { id: string; title: string; values: { single: number; combo: number } }) => {
   const selectedValue = selectedValues.value[item.id];
   if (selectedValue) {
-    orderStore.addItemToCart({ title: item.title, value: selectedValue });
+    orderStore.addItemToCart({ id: item.id, name: item.title, price: selectedValue, quantity: 1 });
   } else {
     alert('Por favor, selecione uma opção antes de adicionar ao carrinho.');
   }

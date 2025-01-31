@@ -72,10 +72,7 @@ const handlePayment = async () => {
   if (!selectedPaymentMethod.value) return;
 
   try {
-    const success = await paymentService.processPayment(
-        cartStore.totalPrice,
-        selectedPaymentMethod.value
-    );
+    const success = await paymentService.processPayment();
 
     if (success) {
       alert('Pagamento realizado com sucesso!');
