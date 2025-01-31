@@ -11,9 +11,13 @@ export const useAuthStore = defineStore('auth', {
     }),
     actions: {
         async login(credentials: { login: string; password: string }) {
-            const response = await AuthService.login(credentials);
-            this.token = response.token;
-            localStorage.setItem('token', response.token);
+            try {
+                const response = await AuthService.login(credentials);
+                this.token = response.token;
+                localStorage.setItem('token', response.token);
+            } catch (error) {
+                throw new Error('Login falhou, verifique suas credenciais.');
+            }
         },
         logout() {
             this.token = null;

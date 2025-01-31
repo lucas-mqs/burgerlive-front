@@ -21,11 +21,6 @@ import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth.store';
 import { useRouter } from 'vue-router';
 
-const testUsers = [
-  { login: 'eliane_almeida@gmail.com.br', password: 'Prior8756@' },
-  { login: 'manoeljuandapaz@gmail.com.br', password: 'Pedra0143@' }
-];
-
 export default {
   setup() {
     const login = ref('');
@@ -34,18 +29,17 @@ export default {
     const authStore = useAuthStore();
     const router = useRouter();
 
-    const handleLogin = () => {
-      const user = testUsers.find(u => u.login === login.value && u.password === password.value);
-      if (user) {
-        authStore.token = 'token-handler';
-        router.push('/home'); // Redireciona corretamente para /home
-      } else {
-        errorMessage.value = 'Credenciais inválidas';
+    const handleLogin = async () => {
+      try {
+        await authStore.login({ login: login.value, password: password.value });
+        router.push('/home'); // Redireciona para a home se o login for bem-sucedido
+      } catch (error) {
+        errorMessage.value = 'Credenciais inválidas ou erro na autenticação';
       }
     };
 
     return { login, password, handleLogin, errorMessage };
-  }
+  },
 };
 </script>
 
