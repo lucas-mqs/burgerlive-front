@@ -9,7 +9,7 @@ export const AuthService = {
     login: async (data: LoginData) => {
         try {
             const response = await api.post('/user/login', data);
-            return response.data; // Retorna o token esperado
+            return response.data;
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             throw new Error('Falha na autenticação');

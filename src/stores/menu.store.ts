@@ -6,7 +6,7 @@ interface MenuItem {
     name: string;
     title: string;
     description: string;
-    image: string;
+    image: string | string[];
     values: {
         single: number;
         combo: number;

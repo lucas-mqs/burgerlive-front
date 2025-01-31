@@ -14,7 +14,6 @@
           />
         </div>
       </div>
-      <!-- Mostra controles apenas se houver múltiplas imagens -->
       <div
           class="swiper-pagination"
           v-if="normalizedImages.length > 1"
@@ -37,10 +36,9 @@ import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
 
 const props = defineProps<{
-  images: string[] | string; // Aceita ambos os tipos
+  images: string[] | string;
 }>();
 
-// Normaliza para array sempre
 const normalizedImages = computed(() => {
   return Array.isArray(props.images)
       ? props.images

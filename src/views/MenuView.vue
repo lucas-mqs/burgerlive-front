@@ -5,27 +5,18 @@
 
     <div v-if="menuStore.loading" class="loading">Carregando...</div>
 
-    <section v-else>
+    <section>
       <!-- Seções dinâmicas -->
-      <section
-          class="menu-section"
-          v-for="section in menuSections"
-          :key="section.title"
-      >
+      <section class="menu-section" v-for="section in menuSections" :key="section.title">
         <h2>{{ section.icon }} {{ section.title }}</h2>
         <div class="grid">
-          <MenuItem
-              v-for="item in section.items"
-              :key="item.id"
-              :item="item"
-              @add-to-cart="handleAddToCart"
-          />
+          <MenuItem v-for="item in section.items" :key="item.id" :item="item" @add-to-cart="handleAddToCart" />
         </div>
       </section>
 
       <!-- Botão para testar a criação de pedido -->
       <div class="test-container">
-        <button @click="testarPedido" class="test-button">Criar Pedido de Teste</button>
+        <button @click="testarPedido" class="test-button">Criar Pedido de Test</button>
         <p v-if="loading">Enviando pedido...</p>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
         <p v-if="successMessage" class="success">Pedido criado! ID: {{ successMessage }}</p>
@@ -65,7 +56,6 @@ const testarPedido = async () => {
   successMessage.value = '';
 
   try {
-    // Mock de pedido com produtos do menu
     const pedidoTeste = {
       items: [
         { id: '1', name: 'Hambúrguer Teste', price: 25.99, quantity: 1 },
@@ -101,7 +91,7 @@ onMounted(async () => {
   background: white;
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .menu-section h2 {

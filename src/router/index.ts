@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import OrderView from '../views/OrderView.vue';
-import CheckoutView from '../views/CheckoutView.vue'; // <-- Nova importação
+import CheckoutView from '../views/CheckoutView.vue';
 import { useAuthStore } from '../stores/auth.store';
-import MenuView from "../views/MenuView.vue";
+import HomeView from "../views/HomeView.vue";
+
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path: '/', component: LoginView },
-        { path: '/home', component: MenuView, meta: { requiresAuth: true } },
+        { path: '/home', component: HomeView, meta: { requiresAuth: true } },
         { path: '/login', component: LoginView },
         {
             path: '/order',
