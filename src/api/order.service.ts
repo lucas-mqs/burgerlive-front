@@ -1,6 +1,6 @@
 import api from './api';
 
-interface OrderItem {
+export interface OrderItem {
     title: string;
     value: number;
 }

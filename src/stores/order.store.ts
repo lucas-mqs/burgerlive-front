@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia';
-import { OrderService } from '../api/order.service';
-import type { CreateOrderData, OrderItem } from '../api/order.service';
+import type { OrderItem } from '../api/order.service';
+
+interface CartItem {
+    title: string;
+    value: number;
+}
 
 interface OrderState {
     orderId: string | null;
@@ -11,25 +15,28 @@ interface OrderState {
 
 export const useOrderStore = defineStore('order', {
     state: (): OrderState => ({
-        orderId: null,
-        loading: false,
+        selectedItems: [],
         error: null,
-        selectedItems: []
+        loading: false,
+        orderId: null
     }),
 
     actions: {
-        async createOrder(paymentOption: string) {
+        async createOrder() {
             this.loading = true;
             this.error = null;
 
             try {
-                const orderData: CreateOrderData = {
-                    items: this.selectedItems,
-                    paymentOption
-                };
+                // const orderData: CreateOrderData = {
+                //     items: this.selectedItems,
+                //     paymentOption
+                // };
 
-                const response = await OrderService.createOrder(orderData);
-                this.orderId = response.data.orderId;
+                // const response = await OrderService.createOrder(orderData);
+                // this.orderId = response.data.orderId;
+
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+
                 this.clearCart();
             } catch (error: any) {
                 this.error = error.response?.data?.message || 'Erro ao finalizar pedido';
@@ -52,8 +59,6 @@ export const useOrderStore = defineStore('order', {
     },
 
     getters: {
-        totalAmount: (state) => {
-            return state.selectedItems.reduce((sum, item) => sum + item.value, 0);
-        }
+        totalAmount: (state) => state.selectedItems.reduce((total: number, item: CartItem) => total + item.value, 0),
     }
 });
