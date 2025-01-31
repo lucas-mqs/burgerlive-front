@@ -6,8 +6,8 @@
 
     <p>{{ item.description }}</p>
 
+    <!-- Remova a condicional v-if="item.values" -->
     <ItemOptions
-        v-if="item.values"
         :item="item"
         v-model="selectedOption"
     />
@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { CartItem } from '../modules/order/domain/models/CartItem.ts';
+import type { CartItem } from '../modules/order/domain/models/CartItem';
 import ItemImages from '../MenuItem/ItemImages.vue';
 import ItemOptions from '../MenuItem/ItemOptions.vue';
 import QuantitySelector from '../MenuItem/QuantitySelector.vue';
@@ -32,7 +32,7 @@ const props = defineProps<{
     title: string;
     description: string;
     image: string[];
-    values?: { single: number; combo: number };
+    values?: Record<string, number | null>; // Alterado para estrutura genérica
     value?: number;
   };
 }>();
@@ -43,16 +43,28 @@ const quantity = ref(1);
 const selectedOption = ref<number | null>(null);
 
 const handleAddToCart = () => {
+  // Calcula o preço corretamente para ambos os casos
+  const price = selectedOption.value ?? props.item.value ?? 0;
+
   const cartItem: CartItem = {
     id: props.item.id,
     name: props.item.title,
-    price: selectedOption.value || props.item.value || 0,
+    price: price,
     quantity: quantity.value,
     options: props.item.values ? {
-      type: selectedOption.value === props.item.values.single ? 'single' : 'combo'
+      type: selectedOption.value ? getOptionType(selectedOption.value) : undefined
     } : undefined
   };
 
   emit('add-to-cart', cartItem);
+};
+
+// Helper para identificar o tipo da opção selecionada
+const getOptionType = (value: number): string | undefined => {
+  if (!props.item.values) return undefined;
+
+  return Object.entries(props.item.values).find(
+      ([_, val]) => val === value
+  )?.[0]; // Retorna 'small', 'large', etc.
 };
 </script>
